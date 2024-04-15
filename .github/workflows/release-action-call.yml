@@ -1,0 +1,22 @@
+name: Release action
+# Call the reusable workflow release-solution-with-inputs.yml
+# Release your solution to prod when you create a new release.
+
+on:
+  release:
+      types: [created]        
+permissions:
+  contents: write
+jobs:
+  Release-solution-MultiLanguage:
+    uses: ./.github/workflows/release-solution-to-prod-with-inputs.yml
+    with:
+      #You can specify the solution name here
+      solution_name: MultiLanguage
+      #Update your values here
+      BUILD_ENVIRONMENT_URL: https://githubactionbuild.crm21.dynamics.com
+      PRODUCTION_ENVIRONMENT_URL: https://org6208aa5c.crm21.dynamics.com
+      CLIENT_ID: ed17e373-de34-444f-b392-5bbf0c571572
+      TENANT_ID: 3026e9ae-1c6f-48bc-aa40-711484d97639      
+    secrets:
+      envSecret: ${{ secrets.PowerPlatformSPN }}
