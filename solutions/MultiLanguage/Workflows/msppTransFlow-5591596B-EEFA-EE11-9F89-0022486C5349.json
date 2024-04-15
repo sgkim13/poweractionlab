@@ -1,0 +1,184 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_excelonlinebusiness": {
+        "runtimeSource": "invoker",
+        "connection": {
+          "connectionReferenceLogicalName": "git_sharedexcelonlinebusiness_2d011"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      },
+      "shared_microsofttranslatorv": {
+        "runtimeSource": "invoker",
+        "connection": {
+          "connectionReferenceLogicalName": "git_sharedmicrosofttranslatorv_3a09c"
+        },
+        "api": {
+          "name": "shared_microsofttranslatorv"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "3cf84660-62b7-4c97-a398-6d198d34eb95"
+          },
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "LanguageTag",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "입력하세요.",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "테이블에_있는_행_나열": {
+          "runAfter": {},
+          "metadata": {
+            "01ZOGTSRL4ZFXMQPFV6BELT7MQNAUHCULW": "/Localization.xlsx",
+            "operationMetadataId": "33c533c6-2815-4fe8-867f-43652a03e443",
+            "tableId": "{36839FFC-3CEB-4C67-B5ED-0A80CD6CC0B8}"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "GetItems"
+            },
+            "parameters": {
+              "source": "groups/5d219868-ad8f-472a-98ac-f183da530e93",
+              "drive": "b!46Vv1SRfqE2CCRLvpB4g8prFO3-_iBhMgG0ewn1Cb9_8bcN3SXx-TINJh5WjU9Sm",
+              "file": "01ZOGTSRL4ZFXMQPFV6BELT7MQNAUHCULW",
+              "table": "{36839FFC-3CEB-4C67-B5ED-0A80CD6CC0B8}",
+              "$filter": "LanguageTag eq 'en'"
+            },
+            "authentication": {
+              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+              "type": "Raw"
+            }
+          }
+        },
+        "각각에_적용": {
+          "foreach": "@outputs('테이블에_있는_행_나열')?['body/value']",
+          "actions": {
+            "텍스트_번역": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "34942fe6-f7cb-4f5a-8892-7665ac84adc4"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsofttranslatorv",
+                  "connectionName": "shared_microsofttranslatorv",
+                  "operationId": "Translate"
+                },
+                "parameters": {
+                  "from": "en",
+                  "to": "@triggerBody()['text']",
+                  "body": [
+                    {
+                      "Text": "@items('각각에_적용')?['LocalizedText']"
+                    }
+                  ],
+                  "textType": "plain",
+                  "profanityAction": "NoAction",
+                  "profanityMarker": "Asterisk",
+                  "includeSentenceLength": "false",
+                  "category": "general",
+                  "allowFallback": "false"
+                },
+                "authentication": {
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                  "type": "Raw"
+                }
+              }
+            },
+            "각각에_적용_2": {
+              "foreach": "@body('텍스트_번역')",
+              "actions": {
+                "테이블에_행_추가": {
+                  "runAfter": {},
+                  "metadata": {
+                    "01ZOGTSRL4ZFXMQPFV6BELT7MQNAUHCULW": "/Localization.xlsx",
+                    "operationMetadataId": "2b54f46e-2abf-4428-850d-70750852f5d9"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+                      "connectionName": "shared_excelonlinebusiness",
+                      "operationId": "AddRowV2"
+                    },
+                    "parameters": {
+                      "source": "groups/5d219868-ad8f-472a-98ac-f183da530e93",
+                      "drive": "b!46Vv1SRfqE2CCRLvpB4g8prFO3-_iBhMgG0ewn1Cb9_8bcN3SXx-TINJh5WjU9Sm",
+                      "file": "01ZOGTSRL4ZFXMQPFV6BELT7MQNAUHCULW",
+                      "table": "{36839FFC-3CEB-4C67-B5ED-0A80CD6CC0B8}",
+                      "item/TextID": "@items('각각에_적용')?['TextID']",
+                      "item/LanguageTag": "@triggerBody()['text']",
+                      "item/LocalizedText": "@item()?['TranslatedText']"
+                    },
+                    "authentication": {
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                      "type": "Raw"
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "텍스트_번역": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "477c08ca-6b78-4244-841d-414e942840ca"
+              },
+              "type": "Foreach"
+            }
+          },
+          "runAfter": {
+            "테이블에_있는_행_나열": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "94238c19-b32f-4348-8fd8-41b68f3e96fe"
+          },
+          "type": "Foreach"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}
