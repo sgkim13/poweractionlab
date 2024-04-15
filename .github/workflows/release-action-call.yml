@@ -16,7 +16,7 @@ jobs:
       #Update your values here
       BUILD_ENVIRONMENT_URL: https://githubactionbuild.crm21.dynamics.com
       PRODUCTION_ENVIRONMENT_URL: https://org6208aa5c.crm21.dynamics.com
-      CLIENT_ID: ed17e373-de34-444f-b392-5bbf0c571572
+      CLIENT_ID: b2b4bd6a-e23f-415c-9c1b-48561810c3c4
       TENANT_ID: 3026e9ae-1c6f-48bc-aa40-711484d97639      
     secrets:
       envSecret: ${{ secrets.PowerPlatformSPN }}
