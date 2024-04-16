@@ -119,6 +119,11 @@ jobs:
       RUNNER_DEBUG: 1
 
     steps:
+    - name: Install Power Platform Tools
+      uses: microsoft/powerplatform-actions/actions-install@v1
+      with:
+        pac-version-override: 1.31.6
+
     - uses: actions/checkout@v2
       with:
         lfs: true
