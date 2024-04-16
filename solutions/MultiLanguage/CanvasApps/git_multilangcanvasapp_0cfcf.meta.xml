@@ -28,7 +28,4 @@
   <IsCustomizable>1</IsCustomizable>
   <BackgroundImageUri>/CanvasApps/git_multilangcanvasapp_0cfcf_BackgroundImageUri</BackgroundImageUri>
   <DocumentUri>/CanvasApps/git_multilangcanvasapp_0cfcf_DocumentUri.msapp</DocumentUri>
-  <AdditionalUris>
-    <AdditionalUri>/CanvasApps/git_multilangcanvasapp_0cfcf_AdditionalUris0_identity.json</AdditionalUri>
-  </AdditionalUris>
 </CanvasApp>
