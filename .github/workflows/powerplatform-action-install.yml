@@ -1,0 +1,11 @@
+jobs:
+  generate-solution-from-env:
+    runs-on: windows-latest
+    # or you can say runs-on: ubuntu-latest
+    steps:
+    - name: Install Power Platform Tools
+      id: install-power-platform-tools
+    - uses: microsoft/powerplatform-actions/actions-install@v1
+      with:
+        pac-version-override: 1.29.11
+
